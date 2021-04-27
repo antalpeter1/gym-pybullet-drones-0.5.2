@@ -9,7 +9,7 @@ class Flip:
         self.Ixx = 0.0000158
         #self.Ixx = 2.3951e-5
         self.inertiaMatrix = np.diag(np.array([0.0000158, 0.0000158, 0.00002926]))
-        self.inertiaMatrix = np.diag(np.array([2.3951e-5, 2.3951e-5, 3.2347e-5]))
+        #self.inertiaMatrix = np.diag(np.array([2.3951e-5, 2.3951e-5, 3.2347e-5]))
         self.length = 0.046
         self.Bup = 20.86
         self.Bdown = 6.246
@@ -17,8 +17,8 @@ class Flip:
         self.gravity = 9.806
         self.thrustToDrag = 2.093e-6  #0.006
         self.KF = 3.16e-10
-        self.PWM2RPM_SCALE = 0.28  # 0.2685
-        self.PWM2RPM_CONST = 3000  # 4070.3
+        self.PWM2RPM_SCALE = 0.33  # 0.2685
+        self.PWM2RPM_CONST = 0  # 4070.3
 
     def get_acceleration(self, p0, p3):
         """Compute the acceleration from the generated parameters."""
@@ -122,6 +122,9 @@ class Flip:
         PWM[2] = coll_thrust / (self.thrustToDrag * 4)
         PWM[3] = (coll_thrust - 2 * mp / self.length) / (self.thrustToDrag * 4)
 
+        for i in range(len(PWM)):
+            if PWM[i] >= 65535:
+                PWM[i] = 65535
         return PWM
 
     def moments(self, desired_acc, angular_vel):
