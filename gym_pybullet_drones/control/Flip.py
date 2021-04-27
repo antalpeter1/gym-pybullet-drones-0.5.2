@@ -154,5 +154,5 @@ class Flip:
         thrusts = self.motor_thrust(tau, section[0])
         motor_velo = np.sqrt(1./self.KF * thrusts)
         PWM = self.motor_pwm(tau, section[0])
-        print(PWM)
+        # print(PWM)
         return self.PWM2RPM_CONST + self.PWM2RPM_SCALE*PWM
