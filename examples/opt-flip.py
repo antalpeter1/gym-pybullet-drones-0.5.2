@@ -40,7 +40,7 @@ from bayes_opt.util import load_logs
 
 
 
-def simulate(T5):
+def simulate(U1, T1, T3, U5, T5):
     parameters = np.array([U1, T1, T3, U5, T5])
     env.reset()
     START = time.time()
@@ -134,11 +134,11 @@ if __name__ == "__main__":
     # params = np.abs(params)
 
     # params = np.array([18.774, 0.1, 0.11096576, 18.774, 0.1])
-    params = np.array([18.78215108032221,0.08218741361206124, 0.12091343074644069, 17.951940703885207, 0.05507561729533186])
+    params = np.array([18.78215108032221, 0.08218741361206124, 0.12091343074644069, 17.951940703885207, 0.05507561729533186])
     # U1, T1, T3, U5 = params[0:4]
     # disturb = np.linspace(-5, 5, 10)
 
-    pbounds = {'U1': (12, 20), 'T1': (0.05, 0.15), 'T3': (0.05, 0.15), 'U5': (12, 20), 'T5': (0.05, 0.15), }
+    pbounds = {'U1': (12, 24), 'T1': (0.05, 0.15), 'T3': (0, 0.15), 'U5': (12, 24), 'T5': (0.02, 0.15), }
     #pbounds = {'T5': (0.05, 0.15), }
     optimizer = BayesianOptimization(
         f=simulate,

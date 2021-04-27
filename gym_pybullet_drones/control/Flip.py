@@ -155,7 +155,7 @@ class Flip:
         # tau = self.moments(section[1], angular_vel)
         tau = np.array([self.Ixx * section[1][0], 0, 0])
         thrusts = self.motor_thrust(tau, section[0])
-        motor_velo = np.sqrt(1./self.KF * thrusts)
+        # motor_velo = np.sqrt(1./self.KF * thrusts)
         PWM = self.motor_pwm(tau, section[0])
         # print(PWM)
         return self.PWM2RPM_CONST + self.PWM2RPM_SCALE*PWM
