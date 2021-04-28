@@ -15,7 +15,7 @@ class Flip:
         self.Bdown = 6.246
         self.Cpmax = 2 * np.pi * 1800/180
         self.gravity = 9.806
-        self.thrustToDrag = 0.006 #2.093e-6  #0.006
+        self.thrustToDrag = 1 # 0.006 #2.093e-6  #0.006
         self.KF = 3.16e-10
         self.PWM2RPM_SCALE = 0.2685
         self.PWM2RPM_CONST = 4070.3
@@ -122,11 +122,11 @@ class Flip:
         PWM[2] = coll_thrust / (self.thrustToDrag * 4)
         PWM[3] = (coll_thrust - 2 * mp / self.length) / (self.thrustToDrag * 4)
 
-        for i in range(len(PWM)):
-            if PWM[i] >= 65000:
-                PWM[i] = 65000
-            if PWM[i] <= 20500:
-                PWM[i] = 20500
+        # for i in range(len(PWM)):
+        #     if PWM[i] >= 65000:
+        #         PWM[i] = 65000
+        #     if PWM[i] <= 20500:
+        #         PWM[i] = 20500
         return PWM
 
     def moments(self, desired_acc, angular_vel):
@@ -161,4 +161,4 @@ class Flip:
         PWM = self.motor_pwm(tau, section[0])
         # print(PWM)
         # return self.PWM2RPM_CONST + self.PWM2RPM_SCALE*PWM
-        return motor_velo
+        return np.sqrt(1./self.KF * PWM)
