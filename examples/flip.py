@@ -120,9 +120,11 @@ if __name__ == "__main__":
     params = flip.get_initial_parameters()
     params = np.abs(params)
 
-    params = np.array([18.78215108032221, 0.08218741361206124, 0.12091343074644069, 17.951940703885207, 0.05507561729533186])
-    # params = np.array([19.36300493240688, 0.08104484301761827, 0.1276666295837599, 19.608747246494072, 0.06144706121321647])
-    # params = np.array([18.039406991902837, 0.0963130036564409, 0.12099378836285485, 17.64388508206304,  0.09557917588191489])
+    params = np.array([18.78215108032221, 0.08218741361206124, 0.06091343074644069, 17.951940703885207, 0.05507561729533186])
+
+    #params = np.array([19.43196469117048, 0.10030278761718817, 0.08067212772242574, 22.67464891522324, 0.03015435608434488])
+    #params = np.array([19.36300493240688, 0.08104484301761827, 0.1276666295837599, 19.608747246494072, 0.06144706121321647])
+    #params = np.array([20.091383165810498, 0.12574048792077586, 0.06256431101704019, 19.036582173958717,  0.024810884112393634])
     sections = flip.get_sections(params)  # [(ct1, theta_d1, t1), (ct2,...
     # sections = [(0.5259002302490219, [-42.3460349453322, 0, 0], 0.07218741361206124),
     #             (0.37948400000000004, [297.82962025316453, 0, 0], 0.22265134040164056),
@@ -139,7 +141,8 @@ if __name__ == "__main__":
     T = np.abs(T)
     for i in range(1, len(sections)):
         T[i] = T[i-1] + T[i]
-    T = T*env.SIM_FREQ + ARGS.simulation_freq_hz/10
+    hoverTime = ARGS.simulation_freq_hz/5
+    T = T*env.SIM_FREQ + hoverTime
 
     #### Run the simulation ####################################
     CTRL_EVERY_N_STEPS = int(np.floor(env.SIM_FREQ/ARGS.control_freq_hz))
@@ -157,12 +160,12 @@ if __name__ == "__main__":
         if i%CTRL_EVERY_N_STEPS == 0:
             #### Compute control for the current way point #############
             for j in range(ARGS.num_drones):
-                if i < ARGS.simulation_freq_hz/10:
+                if i < hoverTime:  # we are hovering
                     action[str(j)], _, _ = ctrl[j].computeControlFromState(control_timestep=CTRL_EVERY_N_STEPS*env.TIMESTEP,
                                                                            state=obs[str(j)]["state"],
                                                                            target_pos=np.hstack([TARGET_POS[wp_counters[j], 0:3]])
                                                                            )
-                elif not over:
+                elif not over:  # flip maneuver
                     try:
                         num_sec = np.min([k for k, x in enumerate(T) if i/x < 1])  # decide in which section we are
                     except:

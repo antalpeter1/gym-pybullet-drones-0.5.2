@@ -73,7 +73,8 @@ def simulate(U1, T1, T3, U5, T5):
                     num_sec = np.min([k for k, x in enumerate(T) if i / x < 1])  # decide in which section we are
                 except:
                     final_state = obs['0']["state"]
-                    error_norm = np.linalg.norm([final_state[0:3] - [0, 0, 1], final_state[10:13], final_state[7:10]])
+                    error_norm = np.linalg.norm([final_state[0], final_state[2] - 1, final_state[10], final_state[12],
+                                                 final_state[7]])
                     # env.close()
                     # DUR = time.time()-START
                     # print('Duration of simulation: ', DUR)
@@ -149,8 +150,8 @@ if __name__ == "__main__":
     # load_logs(optimizer, logs=["./logs-init-400-iter-1000.json"]);
 
     optimizer.maximize(
-        init_points=10,
-        n_iter=100,
+        init_points=250,
+        n_iter=1200,
         acq="ucb",
     )
     print(optimizer.max)
