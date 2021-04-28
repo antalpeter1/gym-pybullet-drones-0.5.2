@@ -7,9 +7,9 @@ class Flip:
     def __init__(self):
         self.mass = 0.028
         self.Ixx = 0.0000158
-        #self.Ixx = 2.3951e-5
+        self.Ixx = 2.3951e-5
         self.inertiaMatrix = np.diag(np.array([0.0000158, 0.0000158, 0.00002926]))
-        #self.inertiaMatrix = np.diag(np.array([2.3951e-5, 2.3951e-5, 3.2347e-5]))
+        self.inertiaMatrix = np.diag(np.array([2.3951e-5, 2.3951e-5, 3.2347e-5]))
         self.length = 0.046
         self.Bup = 20.86
         self.Bdown = 6.246

@@ -141,7 +141,7 @@ if __name__ == "__main__":
     T = np.abs(T)
     for i in range(1, len(sections)):
         T[i] = T[i-1] + T[i]
-    hoverTime = ARGS.simulation_freq_hz/5
+    hoverTime = ARGS.simulation_freq_hz/10
     T = T*env.SIM_FREQ + hoverTime
 
     #### Run the simulation ####################################
