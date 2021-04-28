@@ -178,12 +178,6 @@ if __name__ == "__main__":
                         # ctrl[j].reset()
                     finally:
                         action[str(j)] = flip.compute_control_from_section(sections[num_sec], obs[str(j)]["state"][9:12])
-                elif i < 1.5*ARGS.simulation_freq_hz:
-                    action[str(j)], pos_e, pitch_e = ctrl[j].computeControlFromState(control_timestep=CTRL_EVERY_N_STEPS * env.TIMESTEP,
-                                                                           state=obs[str(j)]["state"],
-                                                                           target_pos=[0,0,1],#new_target + [0, 0, 1],
-                                                                           target_rpy=[0, 0, 0]
-                                                                           )
                 else:
                     set_point = afterT[:, after]
                     if not i % 20 and after < len(afterT[1, :])-1:
