@@ -53,7 +53,7 @@ if __name__ == "__main__":
     parser.add_argument('--aggregate',          default=False,      type=str2bool,      help='Whether to aggregate physics steps (default: False)', metavar='')
     parser.add_argument('--obstacles',          default=False,       type=str2bool,      help='Whether to add obstacles to the environment (default: True)', metavar='')
     parser.add_argument('--simulation_freq_hz', default=240,        type=int,           help='Simulation frequency in Hz (default: 240)', metavar='')
-    parser.add_argument('--control_freq_hz',    default=40,         type=int,           help='Control frequency in Hz (default: 48)', metavar='')
+    parser.add_argument('--control_freq_hz',    default=80,         type=int,           help='Control frequency in Hz (default: 48)', metavar='')
     parser.add_argument('--duration_sec',       default=2,          type=int,           help='Duration of the simulation in seconds (default: 5)', metavar='')
     ARGS = parser.parse_args()
 
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     params = np.array([18.78215108032221, 0.08218741361206124, 0.06091343074644069, 17.951940703885207, 0.05507561729533186])
 
-    #params = np.array([19.43196469117048, 0.10030278761718817, 0.08067212772242574, 22.67464891522324, 0.03015435608434488])
+    # params = np.array([19.43196469117048, 0.10030278761718817, 0.08067212772242574, 22.67464891522324, 0.03015435608434488])
     #params = np.array([19.36300493240688, 0.08104484301761827, 0.1276666295837599, 19.608747246494072, 0.06144706121321647])
     #params = np.array([20.091383165810498, 0.12574048792077586, 0.06256431101704019, 19.036582173958717,  0.024810884112393634])
     sections = flip.get_sections(params)  # [(ct1, theta_d1, t1), (ct2,...
@@ -157,7 +157,9 @@ if __name__ == "__main__":
         obs, reward, done, info = env.step(action)
 
         #### Compute control at the desired frequency ##############
-        if i%CTRL_EVERY_N_STEPS == 0:
+        if i % CTRL_EVERY_N_STEPS == 0:
+            if i > 180:
+                a = 1
             #### Compute control for the current way point #############
             for j in range(ARGS.num_drones):
                 if i < hoverTime:  # we are hovering
@@ -174,29 +176,25 @@ if __name__ == "__main__":
                                obs[str(j)]["state"][0:3], ', attitude ', p.getEulerFromQuaternion(obs[str(j)]["state"][3:7])])
                         end_pos = obs[str(j)]["state"][0:3]
                         end_vel = obs[str(j)]["state"][10:13]
-                        new_target = end_pos + 0.5*end_vel
+
+                        new_target = end_pos# + 0.5*end_vel
                         new_target[2] = new_target[2] - 1
-                        afterT = np.array([np.linspace(new_target[i], 0, 10) for i in range(3)])
+                        afterT = np.array([np.linspace(new_target[i], new_target[i], 10) for i in range(3)])
                         after = 0
-                        # ctrl[j].reset()
+                        ctrl[j].reset()
                     finally:
                         action[str(j)] = flip.compute_control_from_section(sections[num_sec], obs[str(j)]["state"][9:12])
-                elif i < 1.5*ARGS.simulation_freq_hz:
-                    action[str(j)], pos_e, pitch_e = ctrl[j].computeControlFromState(control_timestep=CTRL_EVERY_N_STEPS * env.TIMESTEP,
-                                                                           state=obs[str(j)]["state"],
-                                                                           target_pos=[0,0,1],#new_target + [0, 0, 1],
-                                                                           target_rpy=[0, 0, 0]
-                                                                           )
                 else:
-                    set_point = afterT[:, after]
-                    if not i % 20 and after < len(afterT[1, :])-1:
-                        after = after+1
+                    # set_point = afterT[:, after]
+                    # if not i % 20 and after < len(afterT[1, :])-1:
+                    #     after = after+1
                     action[str(j)], _, _ = ctrl[j].computeControlFromState(
                             control_timestep=CTRL_EVERY_N_STEPS * env.TIMESTEP,
                             state=obs[str(j)]["state"],
-                            target_pos=[0,0,1], #set_point + [0, 0, 1],
+                            target_pos=[0.2, 0.2, 1],  # set_point + [0, 0, 1],
                             target_rpy=[0, 0, 0]
                             )
+                    action[str(j)] = [0,0,0,0]
 
             #### Go to the next way point and loop #####################
             for j in range(ARGS.num_drones):
@@ -209,7 +207,7 @@ if __name__ == "__main__":
                        state=obs[str(j)]["state"],
                        control=np.hstack([TARGET_POS[wp_counters[j], 0:2], H+j*H_STEP, np.zeros(9)])
                        )
-        time.sleep(0.0005)
+        time.sleep(0.005)
         #### Printout ##############################################
         if i%env.SIM_FREQ == 0:
             env.render()

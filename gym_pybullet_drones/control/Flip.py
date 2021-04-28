@@ -17,8 +17,8 @@ class Flip:
         self.gravity = 9.806
         self.thrustToDrag = 2.093e-6  #0.006
         self.KF = 3.16e-10
-        self.PWM2RPM_SCALE = 0.33  # 0.2685
-        self.PWM2RPM_CONST = 0  # 4070.3
+        self.PWM2RPM_SCALE = 0.2685
+        self.PWM2RPM_CONST = 4070.3
 
     def get_acceleration(self, p0, p3):
         """Compute the acceleration from the generated parameters."""
@@ -123,8 +123,10 @@ class Flip:
         PWM[3] = (coll_thrust - 2 * mp / self.length) / (self.thrustToDrag * 4)
 
         for i in range(len(PWM)):
-            if PWM[i] >= 65535:
-                PWM[i] = 65535
+            if PWM[i] >= 65000:
+                PWM[i] = 65000
+            if PWM[i] <= 20500:
+                PWM[i] = 20500
         return PWM
 
     def moments(self, desired_acc, angular_vel):
