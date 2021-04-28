@@ -177,7 +177,7 @@ if __name__ == "__main__":
                         end_pos = obs[str(j)]["state"][0:3]
                         end_vel = obs[str(j)]["state"][10:13]
 
-                        new_target = end_pos# + 0.5*end_vel
+                        new_target = end_pos + 0.5*end_vel
                         new_target[2] = new_target[2] - 1
                         afterT = np.array([np.linspace(new_target[i], new_target[i], 10) for i in range(3)])
                         after = 0
@@ -185,13 +185,13 @@ if __name__ == "__main__":
                     finally:
                         action[str(j)] = flip.compute_control_from_section(sections[num_sec], obs[str(j)]["state"][9:12])
                 else:
-                    # set_point = afterT[:, after]
-                    # if not i % 20 and after < len(afterT[1, :])-1:
-                    #     after = after+1
+                    set_point = afterT[:, after]
+                    if not i % 20 and after < len(afterT[1, :])-1:
+                        after = after+1
                     action[str(j)], _, _ = ctrl[j].computeControlFromState(
                             control_timestep=CTRL_EVERY_N_STEPS * env.TIMESTEP,
                             state=obs[str(j)]["state"],
-                            target_pos=[0.2, 0.2, 1],  # set_point + [0, 0, 1],
+                            target_pos=set_point + [0, 0, 1],
                             target_rpy=[0, 0, 0]
                             )
                     action[str(j)] = [0,0,0,0]

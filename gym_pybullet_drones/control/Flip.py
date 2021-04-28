@@ -7,15 +7,15 @@ class Flip:
     def __init__(self):
         self.mass = 0.028
         self.Ixx = 0.0000158
-        self.Ixx = 2.3951e-5
+        #self.Ixx = 2.3951e-5
         self.inertiaMatrix = np.diag(np.array([0.0000158, 0.0000158, 0.00002926]))
-        self.inertiaMatrix = np.diag(np.array([2.3951e-5, 2.3951e-5, 3.2347e-5]))
+        #self.inertiaMatrix = np.diag(np.array([2.3951e-5, 2.3951e-5, 3.2347e-5]))
         self.length = 0.046
         self.Bup = 20.86
         self.Bdown = 6.246
         self.Cpmax = 2 * np.pi * 1800/180
         self.gravity = 9.806
-        self.thrustToDrag = 2.093e-6  #0.006
+        self.thrustToDrag = 0.006 #2.093e-6  #0.006
         self.KF = 3.16e-10
         self.PWM2RPM_SCALE = 0.2685
         self.PWM2RPM_CONST = 4070.3
@@ -154,10 +154,11 @@ class Flip:
         return np.dot(self.inertiaMatrix, value)
 
     def compute_control_from_section(self, section, angular_vel):
-        # tau = self.moments(section[1], angular_vel)
-        tau = np.array([self.Ixx * section[1][0], 0, 0])
+        tau = self.moments(section[1], angular_vel)
+        # tau = np.array([self.Ixx * section[1][0], 0, 0])
         thrusts = self.motor_thrust(tau, section[0])
-        # motor_velo = np.sqrt(1./self.KF * thrusts)
+        motor_velo = np.sqrt(1./self.KF * thrusts)
         PWM = self.motor_pwm(tau, section[0])
         # print(PWM)
-        return self.PWM2RPM_CONST + self.PWM2RPM_SCALE*PWM
+        # return self.PWM2RPM_CONST + self.PWM2RPM_SCALE*PWM
+        return motor_velo
