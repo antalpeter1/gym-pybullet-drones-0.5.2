@@ -184,7 +184,8 @@ if __name__ == "__main__":
                         action[str(j)] = flip.compute_control_from_section(sections[num_sec], obs[str(j)]["state"][9:12])
                 else:
                     set_point = afterT[:, after]
-                    if not i % 20 and after < len(afterT[1, :])-1:
+                    print(set_point)
+                    if not i % 2 and after < len(afterT[1, :])-1:
                         after = after+1
                     action[str(j)], _, _ = ctrl[j].computeControlFromState(
                             control_timestep=CTRL_EVERY_N_STEPS * env.TIMESTEP,
