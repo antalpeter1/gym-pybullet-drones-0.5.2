@@ -113,16 +113,9 @@ if __name__ == "__main__":
     #### Initialize the controllers ############################
     ctrl = [DSLPIDControl(env) for i in range(ARGS.num_drones)]
     flip = Flip()
-    paramfile = open("params.txt", "r")
-    data = paramfile.readline().strip().strip("[]").split(",")
-    params = [float(i) for i in data]
-
+    params = flip.read_params_file()
     params = flip.get_initial_parameters()
-    params = np.abs(params)
-
     params = np.array([18.78215108032221, 0.08218741361206124, 0.12091343074644069, 17.951940703885207, 0.05507561729533186])
-    # params = np.array([19.36300493240688, 0.08104484301761827, 0.1276666295837599, 19.608747246494072, 0.06144706121321647])
-    # params = np.array([18.039406991902837, 0.0963130036564409, 0.12099378836285485, 17.64388508206304,  0.09557917588191489])
     sections = flip.get_sections(params)  # [(ct1, theta_d1, t1), (ct2,...
     sections = [(0.5259002302490219, [-42.3460349453322, 0, 0], 0.08218741361206124),
                 (0.37948400000000004, [297.82962025316453, 0, 0], 0.22265134040164056),
@@ -130,15 +123,7 @@ if __name__ == "__main__":
                 (0.37948400000000004, [-297.82962025316453, 0, 0], 0.22192533330433778),
                 (0.5026543397087858, [59.265512237276155, 0, 0], 0.05507561729533186)]
 
-    print(sections)
-    T = np.zeros(5)
-    for i in range(len(sections)):
-        T[i] = sections[i][2]
-        if T[i] < 0:
-            neg_time = True
-    T = np.abs(T)
-    for i in range(1, len(sections)):
-        T[i] = T[i-1] + T[i]
+    T = flip.get_durations(sections)
     T = T*env.SIM_FREQ + ARGS.simulation_freq_hz/10
 
     #### Run the simulation ####################################
@@ -163,9 +148,11 @@ if __name__ == "__main__":
                                                                            target_pos=np.hstack([TARGET_POS[wp_counters[j], 0:3]])
                                                                            )
                 elif not over:
-                    try:
-                        num_sec = np.min([k for k, x in enumerate(T) if i/x < 1])  # decide in which section we are
-                    except:
+                    possibleT = [k for k, x in enumerate(T) if i/x < 1]
+                    if len(possibleT) != 0:
+                        num_sec = np.min(possibleT)  # decide in which section we are
+                        action[str(j)] = flip.compute_control_from_section(sections[num_sec], obs[str(j)]["state"][9:12])
+                    else:
                         over = True  # the flipping maneuvre is over
                         print(['Flipping is over at t=', float(i) / env.SIM_FREQ, ', position ',
                                obs[str(j)]["state"][0:3], ', attitude ', p.getEulerFromQuaternion(obs[str(j)]["state"][3:7])])
@@ -176,8 +163,6 @@ if __name__ == "__main__":
                         afterT = np.array([np.linspace(new_target[i], 0, 10) for i in range(3)])
                         after = 0
                         # ctrl[j].reset()
-                    finally:
-                        action[str(j)] = flip.compute_control_from_section(sections[num_sec], obs[str(j)]["state"][9:12])
                 else:
                     set_point = afterT[:, after]
                     if not i % 20 and after < len(afterT[1, :])-1:
@@ -215,8 +200,6 @@ if __name__ == "__main__":
         #### Sync the simulation ###################################
         if ARGS.gui:
             sync(i, START, env.TIMESTEP)
-        # if over:
-        #     break
 
     #### Close the environment #################################
     env.close()

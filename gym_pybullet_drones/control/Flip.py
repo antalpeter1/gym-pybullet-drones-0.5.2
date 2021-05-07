@@ -126,3 +126,22 @@ class Flip:
         motor_velo = np.sqrt(1./self.KF * thrusts)
         # print(motor_velo)
         return motor_velo
+
+    def read_params_file(self):
+        try:
+            with open("params.txt", "r") as paramfile:
+                data = paramfile.readline().strip().strip("[]").split(",")
+                return [float(i) for i in data]
+        finally:
+            return np.array([18.78215108032221, 0.08218741361206124, 0.12091343074644069, 17.951940703885207, 0.05507561729533186])
+
+
+
+    def get_durations(self, sections):
+        t = np.zeros(5)
+        for i in range(len(sections)):
+            t[i] = sections[i][2]
+        t = np.abs(t)
+        for i in range(1, len(sections)):
+            t[i] = t[i - 1] + t[i]
+        return t
