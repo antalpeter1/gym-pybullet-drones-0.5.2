@@ -53,7 +53,7 @@ if __name__ == "__main__":
     parser.add_argument('--aggregate',          default=False,      type=str2bool,      help='Whether to aggregate physics steps (default: False)', metavar='')
     parser.add_argument('--obstacles',          default=False,       type=str2bool,      help='Whether to add obstacles to the environment (default: True)', metavar='')
     parser.add_argument('--simulation_freq_hz', default=240,        type=int,           help='Simulation frequency in Hz (default: 240)', metavar='')
-    parser.add_argument('--control_freq_hz',    default=40,         type=int,           help='Control frequency in Hz (default: 48)', metavar='')
+    parser.add_argument('--control_freq_hz',    default=120,         type=int,           help='Control frequency in Hz (default: 48)', metavar='')
     parser.add_argument('--duration_sec',       default=2,          type=int,           help='Duration of the simulation in seconds (default: 5)', metavar='')
     ARGS = parser.parse_args()
 
@@ -117,12 +117,16 @@ if __name__ == "__main__":
     params = flip.get_initial_parameters()
     params = np.array([18.78215108032221, 0.08218741361206124, 0.12091343074644069, 17.951940703885207, 0.05507561729533186])
     sections = flip.get_sections(params)  # [(ct1, theta_d1, t1), (ct2,...
-    sections = [(0.5259002302490219, [-42.3460349453322, 0, 0], 0.08218741361206124),
-                (0.37948400000000004, [297.82962025316453, 0, 0], 0.22265134040164056),
-                (0.17488800000000002, [0, 0, 0], 0.12091343074644069),
-                (0.37948400000000004, [-297.82962025316453, 0, 0], 0.22192533330433778),
-                (0.5026543397087858, [59.265512237276155, 0, 0], 0.05507561729533186)]
-
+    # sections = [(0.5259002302490219, [-42.3460349453322, 0, 0], 0.08218741361206124),
+    #             (0.37948400000000004, [297.82962025316453, 0, 0], 0.22265134040164056),
+    #             (0.17488800000000002, [0, 0, 0], 0.12091343074644069),
+    #             (0.37948400000000004, [-297.82962025316453, 0, 0], 0.22192533330433778),
+    #             (0.5026543397087858, [59.265512237276155, 0, 0], 0.05507561729533186)]
+    sections = [(0.5259002302490219, [-42.3460349453322, 0, 0], 0.1),
+                (0.37948400000000004, [297.82962025316453, 0, 0], 0.225),
+                (0.17488800000000002, [0, 0, 0], 0.125),
+                (0.37948400000000004, [-297.82962025316453, 0, 0], 0.2),
+                (0.5026543397087858, [59.265512237276155, 0, 0], 0.075)]
     T = flip.get_durations(sections)
     T = T*env.SIM_FREQ + ARGS.simulation_freq_hz/10
 
