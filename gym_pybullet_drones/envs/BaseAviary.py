@@ -204,11 +204,11 @@ class BaseAviary(gym.Env):
                 self.VID_HEIGHT=int(480)
                 self.FRAME_PER_SEC = 72
                 self.CAPTURE_FREQ = int(self.SIM_FREQ/self.FRAME_PER_SEC)
-                self.CAM_VIEW = p.computeViewMatrixFromYawPitchRoll(distance=1.2,
+                self.CAM_VIEW = p.computeViewMatrixFromYawPitchRoll(distance=0.7,
                                                                     yaw=-70,
                                                                     pitch=-20,
                                                                     roll=0,
-                                                                    cameraTargetPosition=[0, 0, 1],
+                                                                    cameraTargetPosition=[0, -0.1, 1.1],
                                                                     upAxisIndex=2,
                                                                     physicsClientId=self.CLIENT
                                                                     )
@@ -981,16 +981,23 @@ class BaseAviary(gym.Env):
                    p.getQuaternionFromEuler([0, 0, 0]),
                    physicsClientId=self.CLIENT
                    )
-        p.loadURDF("cube_no_rotation.urdf",
-                   [-.5, -2.5, .5],
-                   p.getQuaternionFromEuler([0, 0, 0]),
-                   physicsClientId=self.CLIENT
+        p.loadURDF("block.urdf",
+                   [0.5, 0.5, 0.2],
+                   p.getQuaternionFromEuler([0, np.pi/2, 0]),
+                   physicsClientId=self.CLIENT,
+                   globalScaling=5,
+                   useFixedBase=1
                    )
-        p.loadURDF("sphere2.urdf",
-                   [0, 2, .5],
-                   p.getQuaternionFromEuler([0,0,0]),
-                   physicsClientId=self.CLIENT
-                   )
+        # p.loadURDF("teddy_vhacd.urdf",
+        #            [0, 0, 0],
+        #            p.getQuaternionFromEuler([0, 0, 0]),
+        #            physicsClientId=self.CLIENT
+        #            )
+        # p.loadURDF("sphere2.urdf",
+        #            [0, 2, .5],
+        #            p.getQuaternionFromEuler([0,0,0]),
+        #            physicsClientId=self.CLIENT
+        #            )
     
     ################################################################################
     
