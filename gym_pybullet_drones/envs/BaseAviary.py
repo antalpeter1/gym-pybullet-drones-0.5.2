@@ -1016,39 +1016,33 @@ class BaseAviary(gym.Env):
         #            p.getQuaternionFromEuler([0,0,0]),
         #            physicsClientId=self.CLIENT
         #            )
-        try:
-            p.loadURDF("gate1.urdf",
-                       [0.0, 0.0, 0],
-                       p.getQuaternionFromEuler([0,0,0]),
-                       physicsClientId=self.CLIENT
-                       )
-        except:
-            pass
-
-        try:
-            p.loadURDF("gate2.urdf",
-                       [0.0, 0.0, 0],
-                       p.getQuaternionFromEuler([0,0,0]),
-                       physicsClientId=self.CLIENT
-                       )
-        except:
-            pass
         # try:
-        #     p.loadURDF("cartpole.urdf",
+        #     p.loadURDF("gate1.urdf",
         #                [0.0, 0.0, 0],
         #                p.getQuaternionFromEuler([0,0,0]),
         #                physicsClientId=self.CLIENT
         #                )
         # except:
         #     pass
-        try:
-            p.loadURDF("cartpole.urdf",
-                       [1.0, 0.0, 0],
-                       p.getQuaternionFromEuler([0,0,0]),
-                       physicsClientId=self.CLIENT
-                       )
-        except:
-            pass
+
+        # try:
+        #     p.loadURDF("gate2.urdf",
+        #                [0.0, 0.0, 0],
+        #                p.getQuaternionFromEuler([0,0,0]),
+        #                physicsClientId=self.CLIENT
+        #                )
+        # except:
+        #     pass
+        p.setAdditionalSearchPath("/home/szilard/gym-pybullet-drones-0.5.2/examples")
+        for i in range(10):
+            try:
+                p.loadURDF("box" + str(i)+ ".urdf",
+                           [0.0, 0.0, 0],
+                           p.getQuaternionFromEuler([0,0,0]),
+                           physicsClientId=self.CLIENT
+                           )
+            except:
+                pass
 
     ################################################################################
     
