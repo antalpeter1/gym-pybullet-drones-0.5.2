@@ -3,7 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="566cf6d0-a81d-442b-a2a4-6dc6f7c1d73f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gym_pybullet_drones/envs/BaseAviary.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_pybullet_drones/envs/BaseAviary.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/box0.urdf" beforeDir="false" afterPath="$PROJECT_DIR$/examples/box0.urdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/box1.urdf" beforeDir="false" afterPath="$PROJECT_DIR$/examples/box1.urdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/vehicle0.csv" beforeDir="false" afterPath="$PROJECT_DIR$/examples/vehicle0.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/vehicle1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/examples/vehicle1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/vehicle2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/examples/vehicle2.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
