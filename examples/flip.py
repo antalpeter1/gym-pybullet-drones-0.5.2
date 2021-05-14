@@ -153,21 +153,11 @@ if __name__ == "__main__":
                         over = True  # the flipping maneuvre is over
                         print(['Flipping is over at t=', float(i) / env.SIM_FREQ, ', position ',
                                obs[str(j)]["state"][0:3], ', attitude ', p.getEulerFromQuaternion(obs[str(j)]["state"][3:7])])
-                        # end_pos = obs[str(j)]["state"][0:3]
-                        # end_vel = obs[str(j)]["state"][10:13]
-                        # new_target = end_pos + 0.5*end_vel
-                        # new_target[2] = new_target[2] - 1
-                        # afterT = np.array([np.linspace(new_target[i], 0, 10) for i in range(3)])
-                        # after = 0
-                        # ctrl[j].reset()
                 else:
-                    # set_point = afterT[:, after]
-                    # if not i % 20 and after < len(afterT[1, :])-1:
-                    #     after = after+1
                     action[str(j)], _, _ = ctrl[j].computeControlFromState(
                             control_timestep=CTRL_EVERY_N_STEPS * env.TIMESTEP,
                             state=obs[str(j)]["state"],
-                            target_pos=INIT_XYZS[j, :], #  np.hstack([TARGET_POS[wp_counters[j], 0:3]]),  # [0, 0, 1], #set_point + [0, 0, 1],
+                            target_pos=INIT_XYZS[j, :],
                             target_rpy=[0, 0, 0]
                             )
 

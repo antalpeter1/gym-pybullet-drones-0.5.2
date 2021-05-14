@@ -177,10 +177,10 @@ class BaseAviary(gym.Env):
             self.CLIENT = p.connect(p.GUI) # p.connect(p.GUI, options="--opengl2")
             for i in [p.COV_ENABLE_RGB_BUFFER_PREVIEW, p.COV_ENABLE_DEPTH_BUFFER_PREVIEW, p.COV_ENABLE_SEGMENTATION_MARK_PREVIEW]:
                 p.configureDebugVisualizer(i, 0, physicsClientId=self.CLIENT)
-            p.resetDebugVisualizerCamera(cameraDistance=1.2,
+            p.resetDebugVisualizerCamera(cameraDistance=2,
                                          cameraYaw=-70,
-                                         cameraPitch=-20,
-                                         cameraTargetPosition=[0, 0, 2],
+                                         cameraPitch=-90,
+                                         cameraTargetPosition=[0, 0, 1],
                                          physicsClientId=self.CLIENT
                                          )
             ret = p.getDebugVisualizerCamera(physicsClientId=self.CLIENT)

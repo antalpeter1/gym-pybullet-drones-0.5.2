@@ -32,7 +32,7 @@ from gym_pybullet_drones.envs.BaseAviary import DroneModel, Physics
 from gym_pybullet_drones.envs.CtrlAviary import CtrlAviary
 from gym_pybullet_drones.envs.VisionAviary import VisionAviary
 from gym_pybullet_drones.control.DSLPIDControl import DSLPIDControl
-from gym_pybullet_drones.control.SimplePIDControl import SimplePIDControl
+from gym_pybullet_drones.control.Flip import Flip
 from gym_pybullet_drones.utils.Logger import Logger
 from gym_pybullet_drones.utils.utils import sync, str2bool
 
@@ -51,8 +51,8 @@ if __name__ == "__main__":
     parser.add_argument('--aggregate',          default=False,      type=str2bool,      help='Whether to aggregate physics steps (default: False)', metavar='')
     parser.add_argument('--obstacles',          default=True,       type=str2bool,      help='Whether to add obstacles to the environment (default: True)', metavar='')
     parser.add_argument('--simulation_freq_hz', default=240,        type=int,           help='Simulation frequency in Hz (default: 240)', metavar='')
-    parser.add_argument('--control_freq_hz',    default=40,         type=int,           help='Control frequency in Hz (default: 48)', metavar='')
-    parser.add_argument('--duration_sec',       default=5,          type=int,           help='Duration of the simulation in seconds (default: 5)', metavar='')
+    parser.add_argument('--control_freq_hz',    default=120,         type=int,           help='Control frequency in Hz (default: 48)', metavar='')
+    parser.add_argument('--duration_sec',       default=15,          type=int,           help='Duration of the simulation in seconds (default: 5)', metavar='')
     parser.add_argument('--write_csv',          default=False,      type=str2bool,      help='Whether to save simulation results to .csv file ', metavar='')
     ARGS = parser.parse_args()
 
@@ -92,7 +92,6 @@ if __name__ == "__main__":
     H = 1
     H_STEP = .05
     R = .3
-    INIT_XYZS = np.array([[R*np.cos((i/6)*2*np.pi+np.pi/2), R*np.sin((i/6)*2*np.pi+np.pi/2)-R, H+i*H_STEP] for i in range(ARGS.num_drones)])
     INIT_XYZS = []
     for i in range(ARGS.num_drones):
         x_init = group_trajectories[str(i)]['x'][0](0)
@@ -101,7 +100,6 @@ if __name__ == "__main__":
         INIT_XYZS += [x_init, y_init, z_init]
 
     INIT_XYZS = np.array(INIT_XYZS).reshape(-1, 3)
-    # INIT_XYZS = np.array([[-0.574485 + i, 0.3251617, 1] for i in range(4)])
     AGGR_PHY_STEPS = int(ARGS.simulation_freq_hz/ARGS.control_freq_hz) if ARGS.aggregate else 1
 
     #### Create the environment with or without video capture ##
@@ -138,8 +136,6 @@ if __name__ == "__main__":
     PERIOD = 2
     NUM_WP = ARGS.control_freq_hz*PERIOD
     TARGET_POS = np.zeros((NUM_WP,3))
-    for i in range(NUM_WP):
-        TARGET_POS[i, :] = R*np.cos((i/NUM_WP)*(2*np.pi)+np.pi/2)+INIT_XYZS[0, 0], R*np.sin((i/NUM_WP)*(2*np.pi)+np.pi/2)-R+INIT_XYZS[0, 1], INIT_XYZS[0, 2]
     wp_counters = np.array([int((i*NUM_WP/6)%NUM_WP) for i in range(ARGS.num_drones)])
 
     #### Initialize the logger #################################
@@ -149,7 +145,17 @@ if __name__ == "__main__":
 
     #### Initialize the controllers ############################
     ctrl = [DSLPIDControl(env) for i in range(ARGS.num_drones)]
-    # ctrl = [SimplePIDControl(env) for i in range(ARGS.num_drones)]
+
+    # Initialize flip controller
+    flip = Flip()
+    sections = [(0.5259, [-42.346, 0, 0], 0.1),
+                (0.37948, [297.8296, 0, 0], 0.225),
+                (0.174888, [0, 0, 0], 0.125),
+                (0.379484, [-297.8296, 0, 0], 0.2),
+                (0.502654, [59.2655, 0, 0], 0.075)]
+    T = flip.get_durations(sections)
+    final_pos = np.zeros((ARGS.num_drones, 3))
+    # End of initialize flip controller
 
     #### Run the simulation ####################################
     CTRL_EVERY_N_STEPS = int(np.floor(env.SIM_FREQ/ARGS.control_freq_hz))
@@ -158,15 +164,24 @@ if __name__ == "__main__":
 
 
     # Szilard code
-    t = np.linspace(0, 5, math.ceil(int(ARGS.duration_sec*env.SIM_FREQ) / CTRL_EVERY_N_STEPS))
+    t = np.linspace(0, 5, math.ceil(int(5*env.SIM_FREQ) / CTRL_EVERY_N_STEPS))
     count = 0
 
+    state = "trajectory tracking"  # 1: Szilard trajectory tracking, 2: Peter flip maneuver, 3: PID hover
 
-    # 2. evalute polynome
+    # 2. evaluate polynomial
 
     # Szilard code
 
     for i in range(0, int(ARGS.duration_sec*env.SIM_FREQ), AGGR_PHY_STEPS):
+
+        # Adjust camera position
+        p.resetDebugVisualizerCamera(cameraDistance=2,
+                                     cameraYaw=-70 + i/20,
+                                     cameraPitch=-90 + i/34,
+                                     cameraTargetPosition=[0.5, 0, 1],
+                                     physicsClientId=env.CLIENT
+                                     )
 
         #### Make it rain rubber ducks #############################
         # if i/env.SIM_FREQ>5 and i%10==0 and i/env.SIM_FREQ<10: p.loadURDF("duck_vhacd.urdf", [0+random.gauss(0, 0.3),-0.5+random.gauss(0, 0.3),3], p.getQuaternionFromEuler([random.randint(0,360),random.randint(0,360),random.randint(0,360)]), physicsClientId=PYB_CLIENT)
@@ -176,21 +191,53 @@ if __name__ == "__main__":
 
         #### Compute control at the desired frequency ##############
         if i%CTRL_EVERY_N_STEPS == 0:
-            print(count)
             count += 1
             #### Compute control for the current way point #############
-            for j in range(ARGS.num_drones):
-                x = group_trajectories[str(j)]["x"][0](t[count-1])
-                y = group_trajectories[str(j)]["y"][0](t[count-1])
-                z = H
-                action[str(j)], _, _ = ctrl[j].computeControlFromState(control_timestep=CTRL_EVERY_N_STEPS*env.TIMESTEP,
-                                                                       state=obs[str(j)]["state"],
-                                                                       # target_pos=np.hstack([TARGET_POS[wp_counters[j], 0:3]])
-                                                                       target_pos= [x, y, z]
-                                                                       # target_pos= [x[0](t[0]) + j, y[0](t[0]), TARGET_POS[wp_counters[j], 2] ]
-                                                                       )
-                print([x, y, z])
-            print("")
+            if state == "trajectory tracking":  # Szilard trajectory tracking
+                for j in range(ARGS.num_drones):
+                    x = group_trajectories[str(j)]["x"][0](t[count-1])
+                    y = group_trajectories[str(j)]["y"][0](t[count-1])
+                    z = H
+                    action[str(j)], _, _ = ctrl[j].computeControlFromState(control_timestep=CTRL_EVERY_N_STEPS*env.TIMESTEP,
+                                                                           state=obs[str(j)]["state"],
+                                                                           # target_pos=np.hstack([TARGET_POS[wp_counters[j], 0:3]])
+                                                                           target_pos=[x, y, z]
+                                                                           # target_pos= [x[0](t[0]) + j, y[0](t[0]), TARGET_POS[wp_counters[j], 2] ]
+                                                                           )
+                if count == len(t):
+                    for j in range(ARGS.num_drones):
+                        final_pos[j, :] = obs[str(j)]["state"][0:3]
+                    state = "hover"
+            elif state == "flip":  # Peter flip maneuver
+                for j in range(ARGS.num_drones):
+                    possibleT = [k for k, x in enumerate(T) if i / x < 1]
+                    if len(possibleT) != 0:
+                        num_sec = np.min(possibleT)  # decide in which section we are
+                        action[str(j)] = flip.compute_control_from_section(sections[num_sec], obs[str(j)]["state"][9:12])
+                    else:
+                        state = "hover_final"  # the flipping maneuvre is over
+                        print(['Flipping is over at t=', float(i) / env.SIM_FREQ, ', position ',
+                               obs[str(j)]["state"][0:3], ', attitude ',
+                               p.getEulerFromQuaternion(obs[str(j)]["state"][3:7])])
+            elif state == "hover":
+                for j in range(ARGS.num_drones):
+                    action[str(j)], _, _ = ctrl[j].computeControlFromState(
+                        control_timestep=CTRL_EVERY_N_STEPS * env.TIMESTEP,
+                        state=obs[str(j)]["state"],
+                        target_pos=final_pos[j, :],
+                        target_rpy=[0, 0, 0]
+                    )
+                if count - len(t) > ARGS.control_freq_hz*2:
+                    T = T * env.SIM_FREQ + i
+                    state = "flip"
+            elif state == "hover_final":
+                for j in range(ARGS.num_drones):
+                    action[str(j)], _, _ = ctrl[j].computeControlFromState(
+                        control_timestep=CTRL_EVERY_N_STEPS * env.TIMESTEP,
+                        state=obs[str(j)]["state"],
+                        target_pos=final_pos[j, :],
+                        target_rpy=[0, 0, 0]
+                    )
             #### Go to the next way point and loop #####################
             for j in range(ARGS.num_drones):
                 wp_counters[j] = wp_counters[j] + 1 if wp_counters[j] < (NUM_WP-1) else 0
