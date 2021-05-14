@@ -128,7 +128,7 @@ class Logger(object):
         # else:
         #     out_filename = 'controlled-trial-' + str(int(params[-1, -1]))
         out_filename = "save-flight-" + datetime.now().strftime("%m.%d.%Y_%H.%M.%S")
-        with open(os.path.dirname(os.path.abspath(__file__)) + '/../../files/logs/'+out_filename+'.csv', 'wb') as out_file:
+        with open(os.path.dirname(os.path.abspath(__file__)) + out_filename+'.csv', 'wb') as out_file:
             #  np.savetxt(out_file, self.timestamps)
 
             for j in range(self.NUM_DRONES):

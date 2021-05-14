@@ -179,8 +179,8 @@ class BaseAviary(gym.Env):
                 p.configureDebugVisualizer(i, 0, physicsClientId=self.CLIENT)
             p.resetDebugVisualizerCamera(cameraDistance=1.2,
                                          cameraYaw=-70,
-                                         cameraPitch=-20,
-                                         cameraTargetPosition=[0, 0, 1],
+                                         cameraPitch=-90,
+                                         cameraTargetPosition=[0, 0, 2],
                                          physicsClientId=self.CLIENT
                                          )
             ret = p.getDebugVisualizerCamera(physicsClientId=self.CLIENT)
@@ -973,6 +973,7 @@ class BaseAviary(gym.Env):
         These obstacles are loaded from standard URDF files included in Bullet.
 
         """
+<<<<<<< Updated upstream
         p.loadURDF("samurai.urdf",
                    physicsClientId=self.CLIENT
                    )
@@ -990,6 +991,18 @@ class BaseAviary(gym.Env):
                    )
         # p.loadURDF("teddy_vhacd.urdf",
         #            [0, 0, 0],
+=======
+        # p.loadURDF("samurai.urdf",
+        #            physicsClientId=self.CLIENT
+        #            )
+        # p.loadURDF("duck_vhacd.urdf",
+        #            [-.5, -.5, .05],
+        #            p.getQuaternionFromEuler([0, 0, 0]),
+        #            physicsClientId=self.CLIENT
+        #            )
+        # p.loadURDF("cube_no_rotation.urdf",
+        #            [-.5, -2.5, .5],
+>>>>>>> Stashed changes
         #            p.getQuaternionFromEuler([0, 0, 0]),
         #            physicsClientId=self.CLIENT
         #            )
@@ -998,7 +1011,32 @@ class BaseAviary(gym.Env):
         #            p.getQuaternionFromEuler([0,0,0]),
         #            physicsClientId=self.CLIENT
         #            )
+<<<<<<< Updated upstream
     
+=======
+        # p.loadURDF("box.urdf",
+        #            [0.5, 0.5, 0],
+        #            p.getQuaternionFromEuler([0,0,0]),
+        #            physicsClientId=self.CLIENT
+        #            )
+        try:
+            p.loadURDF("gate1.urdf",
+                       [0.0, 0.0, 0],
+                       p.getQuaternionFromEuler([0,0,0]),
+                       physicsClientId=self.CLIENT
+                       )
+        except:
+            pass
+
+        try:
+            p.loadURDF("gate2.urdf",
+                       [0.0, 0.0, 0],
+                       p.getQuaternionFromEuler([0,0,0]),
+                       physicsClientId=self.CLIENT
+                       )
+        except:
+            pass
+>>>>>>> Stashed changes
     ################################################################################
     
     def _parseURDFParameters(self):
