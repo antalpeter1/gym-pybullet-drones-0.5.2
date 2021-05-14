@@ -53,6 +53,7 @@ if __name__ == "__main__":
     parser.add_argument('--simulation_freq_hz', default=240,        type=int,           help='Simulation frequency in Hz (default: 240)', metavar='')
     parser.add_argument('--control_freq_hz',    default=40,         type=int,           help='Control frequency in Hz (default: 48)', metavar='')
     parser.add_argument('--duration_sec',       default=5,          type=int,           help='Duration of the simulation in seconds (default: 5)', metavar='')
+    parser.add_argument('--write_csv',          default=False,      type=str2bool,      help='Whether to save simulation results to .csv file ', metavar='')
     ARGS = parser.parse_args()
 
 
@@ -221,7 +222,8 @@ if __name__ == "__main__":
     env.close()
 
     #### Save the simulation results ###########################
-    logger.save()
+    if ARGS.write_csv:
+        logger.save()
 
     #### Plot the simulation results ###########################
     if ARGS.plot:
