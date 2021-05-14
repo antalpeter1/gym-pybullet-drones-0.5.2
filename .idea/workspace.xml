@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="566cf6d0-a81d-442b-a2a4-6dc6f7c1d73f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gym-pybullet-drones-0.5.2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gym-pybullet-drones-0.5.2.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gym_pybullet_drones/envs/BaseAviary.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_pybullet_drones/envs/BaseAviary.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gym_pybullet_drones/utils/Logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_pybullet_drones/utils/Logger.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
