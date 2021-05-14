@@ -973,7 +973,6 @@ class BaseAviary(gym.Env):
         These obstacles are loaded from standard URDF files included in Bullet.
 
         """
-<<<<<<< Updated upstream
         p.loadURDF("samurai.urdf",
                    physicsClientId=self.CLIENT
                    )
@@ -991,7 +990,6 @@ class BaseAviary(gym.Env):
                    )
         # p.loadURDF("teddy_vhacd.urdf",
         #            [0, 0, 0],
-=======
         # p.loadURDF("samurai.urdf",
         #            physicsClientId=self.CLIENT
         #            )
@@ -1002,7 +1000,6 @@ class BaseAviary(gym.Env):
         #            )
         # p.loadURDF("cube_no_rotation.urdf",
         #            [-.5, -2.5, .5],
->>>>>>> Stashed changes
         #            p.getQuaternionFromEuler([0, 0, 0]),
         #            physicsClientId=self.CLIENT
         #            )
@@ -1011,9 +1008,7 @@ class BaseAviary(gym.Env):
         #            p.getQuaternionFromEuler([0,0,0]),
         #            physicsClientId=self.CLIENT
         #            )
-<<<<<<< Updated upstream
-    
-=======
+
         # p.loadURDF("box.urdf",
         #            [0.5, 0.5, 0],
         #            p.getQuaternionFromEuler([0,0,0]),
@@ -1036,7 +1031,6 @@ class BaseAviary(gym.Env):
                        )
         except:
             pass
->>>>>>> Stashed changes
     ################################################################################
     
     def _parseURDFParameters(self):
